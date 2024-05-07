@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {Switch} from "pretty-checkbox-react";
+import React, { useState, useEffect, useRef } from 'react';
+import { Switch } from "pretty-checkbox-react";
 import '@djthoms/pretty-checkbox';
 import './App.css';
 
@@ -8,11 +8,26 @@ function TimeCalculator() {
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [intervals, setIntervals] = useState([{ start: '', end: '' }]);
     const [lunchChecked, setLunchChecked] = useState(true);
+    const startTimeInputRef = useRef(null);
+
 
     useEffect(() => {
         calculateTotalTime();
     }, [intervals, lunchChecked]);
 
+    useEffect(() => {
+        startTimeInputRef.current.focus();
+    }, []);
+
+    useEffect(() => {
+        // Retrieve the value of "lunchChecked" from browser storage
+        chrome.storage.sync.get(['lunchChecked'], (result) => {
+            // If the value exists in storage, use it
+            if (result.lunchChecked !== undefined) {
+                setLunchChecked(result.lunchChecked);
+            }
+        });
+    }, []);
 
     const calculateTotalTime = () => {
         let totalMinutes = 0;
@@ -63,6 +78,14 @@ function TimeCalculator() {
         }
     };
 
+    const handleLunchCheckboxChange = (e) => {
+        const newValue = e.target.checked;
+        setLunchChecked(newValue);
+
+        // Update the value in browser storage
+        chrome.storage.sync.set({ lunchChecked: newValue });
+    };
+
     return (
         <div>
             <div className="header">
@@ -76,6 +99,7 @@ function TimeCalculator() {
                             type="time"
                             value={interval.start}
                             onChange={(e) => handleStartTimeChange(index, e.target.value)}
+                            ref={startTimeInputRef}
                             className="time-input"
                         />
                         <p>Når var du ferdig?</p>
@@ -99,7 +123,7 @@ function TimeCalculator() {
             <Switch
                 color="success"
                 checked={lunchChecked}
-                onChange={(e) => setLunchChecked(e.target.checked)}
+                onChange={handleLunchCheckboxChange}
             />
             <div className="footer">
                 <div className="result">

@@ -11,13 +11,16 @@
   },
   "dependencies": {
     "@djthoms/pretty-checkbox": "^3.1.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "i": "^0.3.7",
     "npm": "^10.6.0",
     "pretty-checkbox-react": "^3.2.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "vite-plugin-copy": "^0.1.6"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.23",
     "@types/chrome": "^0.0.267",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

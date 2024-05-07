@@ -1,0 +1,40 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+.checkbox-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.save-button {
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #0056b3;
+}
+
+.status {
+    margin-top: 20px;
+    color: green;
+}
+
+.eula {
+    Margin: 20px;
+}
