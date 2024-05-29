@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Switch } from "pretty-checkbox-react";
+import React, { useEffect, useState, useRef } from 'react';
+import { Switch } from 'pretty-checkbox-react';
 import '@djthoms/pretty-checkbox';
 import './App.css';
 
@@ -9,7 +9,7 @@ function TimeCalculator() {
     const [intervals, setIntervals] = useState([{ start: '', end: '' }]);
     const [lunchChecked, setLunchChecked] = useState(true);
     const startTimeInputRef = useRef(null);
-
+    const contentRef = useRef(null);
 
     useEffect(() => {
         calculateTotalTime();
@@ -20,7 +20,6 @@ function TimeCalculator() {
     }, []);
 
     useEffect(() => {
-        // Retrieve the value of "lunchChecked" from browser storage
         chrome.storage.sync.get(['lunchChecked'], (result) => {
             // If the value exists in storage, use it
             if (result.lunchChecked !== undefined) {
@@ -31,12 +30,10 @@ function TimeCalculator() {
 
     const calculateTotalTime = () => {
         let totalMinutes = 0;
-
         intervals.forEach(interval => {
             if (interval.start && interval.end) {
                 const [startHour, startMinute] = interval.start.split(':').map(Number);
                 const [endHour, endMinute] = interval.end.split(':').map(Number);
-
                 totalMinutes += (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
             }
         });
@@ -54,8 +51,14 @@ function TimeCalculator() {
 
     const addInterval = () => {
         setIntervals([...intervals, { start: '', end: '' }]);
-    };
 
+        setTimeout(() => {
+            const contentHeight = contentRef.current.scrollHeight;
+            if (contentHeight > 600) {
+                contentRef.current.scrollTop = contentRef.current.scrollHeight;
+            }
+        }, 100);
+    };
     const removeInterval = () => {
         setIntervals(intervals.slice(0, -1));
     };
@@ -113,9 +116,10 @@ function TimeCalculator() {
                 ))}
                 <div className="button-container">
                     <button onClick={addInterval} className="link-button">Legg til intervall</button>
-                    {intervals.length > 1 && <hr/>}
                     {intervals.length > 1 && (
-                        <button onClick={removeInterval} className="link-button">Fjern intervall</button>
+                        <>
+                            <button onClick={removeInterval} className="link-button">Fjern intervall</button>
+                        </>
                     )}
                 </div>
             </div>
@@ -126,8 +130,6 @@ function TimeCalculator() {
                 onChange={handleLunchCheckboxChange}
             />
             <div className="footer">
-                <div className="result">
-
                 {(totalHours > 0 || totalMinutes > 0) && (
                     <h2>
                         Du har jobba i{' '}
@@ -136,7 +138,6 @@ function TimeCalculator() {
                         {totalMinutes > 0 && `${totalMinutes} minutter`}
                     </h2>
                 )}
-                </div>
             </div>
         </div>
     );
