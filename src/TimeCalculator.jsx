@@ -4,10 +4,10 @@ import '@djthoms/pretty-checkbox';
 import './App.css';
 
 function TimeCalculator() {
-    const [totalHours, setTotalHours] = useState(0);
-    const [totalMinutes, setTotalMinutes] = useState(0);
+    const [totalWorkedMinutes, setTotalWorkedMinutes] = useState(0);
     const [intervals, setIntervals] = useState([{ start: '', end: '' }]);
     const [lunchChecked, setLunchChecked] = useState(true);
+    const [decimalHours, setDecimalHours] = useState(false);
     const startTimeInputRef = useRef(null);
     const contentRef = useRef(null);
 
@@ -25,11 +25,29 @@ function TimeCalculator() {
             totalMinutes -= 30;
         }
 
-        const totalHours = Math.floor(totalMinutes / 60);
-        const remainingMinutes = totalMinutes % 60;
+        setTotalWorkedMinutes(totalMinutes);
+    };
 
-        setTotalHours(totalHours);
-        setTotalMinutes(remainingMinutes);
+    // Formaterer arbeidstiden som enten desimaltimer ("7.5 timer")
+    // eller timer og minutter ("7 timer og 30 minutter")
+    const formatWorkedTime = (minutes) => {
+        if (decimalHours) {
+            const hours = Math.round((minutes / 60) * 100) / 100;
+            return `${hours} ${hours === 1 ? 'time' : 'timer'}`;
+        }
+
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        const parts = [];
+
+        if (hours > 0) {
+            parts.push(hours === 1 ? '1 time' : `${hours} timer`);
+        }
+        if (remainingMinutes > 0) {
+            parts.push(remainingMinutes === 1 ? '1 minutt' : `${remainingMinutes} minutter`);
+        }
+
+        return parts.join(' og ');
     };
 
     useEffect(() => {
@@ -41,10 +59,13 @@ function TimeCalculator() {
     }, []);
 
     useEffect(() => {
-        chrome.storage.sync.get(['lunchChecked'], (result) => {
+        chrome.storage.sync.get(['lunchChecked', 'decimalHours'], (result) => {
             // If the value exists in storage, use it
             if (result.lunchChecked !== undefined) {
                 setLunchChecked(result.lunchChecked);
+            }
+            if (result.decimalHours !== undefined) {
+                setDecimalHours(result.decimalHours);
             }
         });
     }, []);
@@ -131,12 +152,9 @@ function TimeCalculator() {
                 onChange={handleLunchCheckboxChange}
             />
             <div className="footer">
-                {(totalHours > 0 || totalMinutes > 0) && (
+                {totalWorkedMinutes > 0 && (
                     <h2>
-                        Du har jobba i{' '}
-                        {totalHours === 1 ? '1 time' : totalHours > 0 ? `${totalHours} timer` : ''}{' '}
-                        {totalHours > 0 && totalMinutes > 0 ? 'og ' : ''}
-                        {totalMinutes > 0 && `${totalMinutes} minutter`}
+                        Du har jobba i {formatWorkedTime(totalWorkedMinutes)}
                     </h2>
                 )}
             </div>

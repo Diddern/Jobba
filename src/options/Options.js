@@ -3,11 +3,12 @@
 // Saves options to chrome.storage
 const saveOptions = () => {
     const lunchChecked = document.getElementById('lunsj').checked;
+    const decimalHours = document.getElementById('desimaltimer').checked;
     const theme = document.getElementById('theme-select').value;
 
     try {
         if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-            chrome.storage.sync.set({ lunchChecked: lunchChecked, themePreference: theme }, () => {
+            chrome.storage.sync.set({ lunchChecked: lunchChecked, decimalHours: decimalHours, themePreference: theme }, () => {
                 const status = document.getElementById('status');
                 status.textContent = 'Innstillinger lagret';
                 setTimeout(() => {
@@ -23,6 +24,7 @@ const saveOptions = () => {
     // fallback
     localStorage.setItem('themePreference', theme);
     localStorage.setItem('lunchChecked', lunchChecked ? '1' : '0');
+    localStorage.setItem('decimalHours', decimalHours ? '1' : '0');
     const status = document.getElementById('status');
     status.textContent = 'Innstillinger lagret';
     setTimeout(() => {
@@ -33,8 +35,9 @@ const saveOptions = () => {
 const restoreOptions = () => {
     try {
         if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-            chrome.storage.sync.get({ lunchChecked: true, themePreference: 'system' }, (items) => {
+            chrome.storage.sync.get({ lunchChecked: true, decimalHours: false, themePreference: 'system' }, (items) => {
                 document.getElementById('lunsj').checked = items.lunchChecked;
+                document.getElementById('desimaltimer').checked = items.decimalHours;
                 document.getElementById('theme-select').value = items.themePreference || 'system';
             });
             return;
@@ -46,6 +49,7 @@ const restoreOptions = () => {
     // fallback
     const lunch = localStorage.getItem('lunchChecked');
     document.getElementById('lunsj').checked = lunch === null ? true : lunch === '1';
+    document.getElementById('desimaltimer').checked = localStorage.getItem('decimalHours') === '1';
     const theme = localStorage.getItem('themePreference') || 'system';
     document.getElementById('theme-select').value = theme;
 };
