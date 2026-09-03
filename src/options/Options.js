@@ -5,7 +5,6 @@ const saveOptions = () => {
     const lunchChecked = document.getElementById('lunsj').checked;
     const theme = document.getElementById('theme-select').value;
 
-    const toStore = { lunchChecked: lunchChecked };
     try {
         if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
             chrome.storage.sync.set({ lunchChecked: lunchChecked, themePreference: theme }, () => {
