@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Switch } from 'pretty-checkbox-react';
 import '@djthoms/pretty-checkbox';
 import './App.css';
@@ -10,23 +10,6 @@ function TimeCalculator() {
     const [lunchChecked, setLunchChecked] = useState(true);
     const startTimeInputRef = useRef(null);
     const contentRef = useRef(null);
-
-    useEffect(() => {
-        calculateTotalTime();
-    }, [intervals, lunchChecked]);
-
-    useEffect(() => {
-        startTimeInputRef.current.focus();
-    }, []);
-
-    useEffect(() => {
-        chrome.storage.sync.get(['lunchChecked'], (result) => {
-            // If the value exists in storage, use it
-            if (result.lunchChecked !== undefined) {
-                setLunchChecked(result.lunchChecked);
-            }
-        });
-    }, []);
 
     const calculateTotalTime = () => {
         let totalMinutes = 0;
@@ -48,6 +31,24 @@ function TimeCalculator() {
         setTotalHours(totalHours);
         setTotalMinutes(remainingMinutes);
     };
+
+    useEffect(() => {
+        calculateTotalTime();
+    }, [intervals, lunchChecked]);
+
+    useEffect(() => {
+        startTimeInputRef.current.focus();
+    }, []);
+
+    useEffect(() => {
+        chrome.storage.sync.get(['lunchChecked'], (result) => {
+            // If the value exists in storage, use it
+            if (result.lunchChecked !== undefined) {
+                setLunchChecked(result.lunchChecked);
+            }
+        });
+    }, []);
+
 
     const addInterval = () => {
         setIntervals([...intervals, { start: '', end: '' }]);

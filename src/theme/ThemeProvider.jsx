@@ -1,5 +1,5 @@
 // New file: ThemeProvider that reads/writes theme preference (supports chrome.storage when available, falls back to localStorage)
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 const ThemeContext = createContext();
 const THEME_KEY = 'themePreference'; // values: 'dark' | 'light' | 'system'
